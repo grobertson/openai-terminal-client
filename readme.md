@@ -1,3 +1,19 @@
+## READ FIRST!!!
+
+This is a fork intended to explore extending "Genie" to be primarily a more robust and featureful command line chat tool, with a secondary goal of retaining Genie's one-shot question/answers feature for use as a script component. When and if this fork reaches the stated goals, this README will be updated. Motivation for this project is academic and experimental, rather than functional. One specific intent of experimentation will be in long conversation context management and summarization. 
+
+### Planned features
+- Extended support for adding your own prompts
+- Easy adjustment of model params, specifically temperature and min-P, both when initializing and at any time during a session
+- Extended support for defining available models
+- Set a default model, saved in ~/.openai-terminal-client.conf
+- Chat logging
+- Context management for longer conversations (This is a broad ranging experiment)
+- Enhanced logging or other abilities surrounding inspect/modify context
+- CI/CD
+- Excellent command help and well executed options and parameters
+
+  
 ## ChatGPT in your terminal
 
 OpenAI's ChatGPT integrated into your shell.
