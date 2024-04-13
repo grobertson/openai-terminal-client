@@ -3,25 +3,28 @@
 import os
 import glob
 import yaml
+import random
 
 from openai import OpenAI
 import click
 
 from .conf import Conf
-from .persona import Persona
 from .conversation import Conversation
+from .console import center_multiline_string
+from .extras import LOGO
 
 class PersonaChat():
     '''Object to contain the application logic. Nearly everything happens in here, or from here.'''
     def __init__(self, persona='default'):
         '''Do as little as possible in init -- makes testing easier!'''
         self.config = Conf()
-        self.client = OpenAI(base_url=self.base_url, api_key=self.config.api_key)
+        self.client = OpenAI(base_url=self.config.base_url, api_key=self.config.api_key)
         self.personas = None # Will hold list of persona
         self.persona = None # Will hold initialized Persona
         self.conversation = None # Hold the conversation
         self.user_query = None # The user's input
         self.scan_personas(self.config.persona_path)
+        print(center_multiline_string(random.choice(LOGO)))
 
     def run(self, **kwargs):
         '''Loop the chat()'''
@@ -63,7 +66,7 @@ class PersonaChat():
         personas = []
         for filename in glob.glob(os.path.join(persona_path, f'*.{self.config.persona_extension}')):
             try:
-                '''Attempt to open and parse each file. If it looks valid, add it to the list'''
+                # Attempt to open and parse each file. If it looks valid, add it to the list
                 with open(filename, "r", encoding='utf-8') as f:
                     persona = yaml.safe_load(f)
                     if not persona:
@@ -75,17 +78,10 @@ class PersonaChat():
                 pass
         self.personas = personas
 
-    def load_persona(self, name='default'):
-        '''Load/reload a persona into the application'''
-        self.config.persona_name = name
-        self.config.persona = Persona(config=self.config)
-
     def clean_data(self, data, **kwargs):
         '''Remove common junk from response before using'''
         if kwargs:
             pass
-        # TODO Validation
-        # Strip <|im_end|>
         strip='<|im_end|>'
         data = data.replace(strip, '')
         strip = f'### {CHARACTER}: '

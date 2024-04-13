@@ -5,6 +5,7 @@ import sys
 import yaml
 import click
 
+from .persona import Persona
 class Conf:
     '''Represent the configuration as an object'''
 
@@ -25,7 +26,6 @@ class Conf:
                     '{self.config_path}/{self.config_file}'. Exiting.")
             sys.exit(255) 
         self.__dict__.update(config)
-        #Set initial persona
         self.persona_name = None
         self.persona = None
 
@@ -36,3 +36,8 @@ class Conf:
     def base_url(self):
         '''Return the base url using the config'''
         return f"http://{self.host}:{self.port}/v1"
+
+    def load_persona(self, name='default'):
+        '''Load/reload a persona into the application'''
+        self.persona_name = name
+        self.persona = Persona(config=self)

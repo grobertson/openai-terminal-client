@@ -13,15 +13,17 @@ max_context: 4096
 # Logging
 logging: true
 log_level: chat
-log_path: ./
+log_path: logs
 
 # Personas
 persona_default: default
 persona_path: personas
 persona_extension: persona
 
+# Templates
 template_path: templates
 template_extension: tmpl
+
 # Developer
 debug: true
 
