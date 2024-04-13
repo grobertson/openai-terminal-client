@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+'''Object to contain the application logic. Nearly everything happens in here, or from here.'''
 import os
 import glob
 import yaml
@@ -9,55 +9,45 @@ import click
 
 from .conf import Conf
 from .persona import Persona
+from .conversation import Conversation
 
 class PersonaChat():
     '''Object to contain the application logic. Nearly everything happens in here, or from here.'''
     def __init__(self, persona='default'):
+        '''Do as little as possible in init -- makes testing easier!'''
         self.config = Conf()
-        self.base_url = f"http://{self.config.host}:{self.config.port}/v1"
-        self.client = OpenAI(
-            base_url=self.base_url,
-            api_key=self.config.api_key)
-        self.personas = []
-        self.persona = False
-        self.load_personas(self.config.persona_path)
-        self.assistant = str('')
-        self.usermsg = str('')
-        self.character = str("")
-        self.config.user = str("User")
-        self.conv_log = f'{self.assistant}\n'
-        #An array to contain each individual message as an element.
-        self.conversation_history = [] 
-        ## Original Assistant text will always be element 0 of conversation_history
-        self.conversation_history.append(self.assistant) 
-        self.system = ''
+        self.client = OpenAI(base_url=self.base_url, api_key=self.config.api_key)
+        self.personas = None # Will hold list of persona
+        self.persona = None # Will hold initialized Persona
+        self.conversation = None # Hold the conversation
+        self.user_query = None # The user's input
+        self.scan_personas(self.config.persona_path)
 
-    def chat(self, **kwargs):
-        '''The main chat loop'''
+    def run(self, **kwargs):
+        '''Loop the chat()'''
+        if kwargs:
+            pass
+        # A "run" is a Conversation, so init a new one before the loop
+        self.conversation = Conversation(self.config, self.persona)
         while 1:
             click.echo('[You]:\t', nl=False)
-            self.usermsg = input()
-            self.conv_log = f'\n{self.assistant}\n### {self.config.user}: {self.usermsg}\n'
-            self.conversation_history.append(f'### {self.config.user}: {self.usermsg}')
-            completion = self.fetch_completion()
-            msg = completion.choices[0].message
-            msg = self.clean_data(msg.content)
-            # TODO Replace conv_log with conversation_history as properly concatenated string
-            click.echo(f'[{CHARACTER}]:\t{msg}')
-            self.conversation_history.append(f'### {CHARACTER}: {msg}')
-            self.conv_log = f'{self.conv_log}\n### {CHARACTER}: {msg}\n'
-            self.assistant = self.conv_log
+            self.user_query = input()
+            self.chat()
+            #click.echo(f'[{CHARACTER}]:\t{response}')
 
-    def fetch_completion(self, **kwargs):
+    def chat(self, **kwargs):
+        '''A single roundtrip'''
+        if kwargs:
+            pass
+        completion = self.request_completion()
+        response = completion.choices[0].message
+        response = self.clean_data(response.content)
+
+    def request_completion(self, **kwargs):
         '''Make api request to get next response'''
-        messages=[
-            {"role": "system", "content": SYSTEM},
-            {"role": "assistant", "content": ASSISTANT},
-            {"role": "user", "content": USERMSG}
-        ]
-        if self.config.debug:
-            #Show the assembled message
-            click.echo(messages)
+        if kwargs:
+            pass
+        #messages = self.build_message()
         req = self.client.chat.completions.create(
                 model=self.config.model,
                 messages=messages,
@@ -66,8 +56,10 @@ class PersonaChat():
                 )
         return req
 
-    def load_personas(self, persona_path, **kwargs):
+    def scan_personas(self, persona_path, **kwargs):
         '''Find all persona files and attempt to load each of them.'''
+        if kwargs:
+            pass
         personas = []
         for filename in glob.glob(os.path.join(persona_path, f'*.{self.config.persona_extension}')):
             try:
@@ -86,10 +78,12 @@ class PersonaChat():
     def load_persona(self, name='default'):
         '''Load/reload a persona into the application'''
         self.config.persona_name = name
-        self.persona = Persona(config=self.config)
+        self.config.persona = Persona(config=self.config)
 
     def clean_data(self, data, **kwargs):
         '''Remove common junk from response before using'''
+        if kwargs:
+            pass
         # TODO Validation
         # Strip <|im_end|>
         strip='<|im_end|>'

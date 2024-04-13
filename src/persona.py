@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+'''Read a persona file and represent it as an object'''
 import os
 import sys
 import yaml
@@ -7,7 +7,6 @@ import click
 
 class Persona:
     '''Read a persona file and represent it as an object'''
-    
     home = os.environ.get('HOME')
     config_path = os.environ.get("OPENAI_TERMINAL_CONFIG_PATH", f'{home}/etc/')
     def __init__(self, config, persona_name=False):
@@ -41,7 +40,8 @@ class Persona:
             self.__dict__.update(character)
 
         def __repr__(self) -> str:
-                return self.given_name
+            return self.given_name
+
         @property
         def full_name(self):
             '''Helper to return full name'''
