@@ -88,7 +88,7 @@ def main():
 
     messages = []
 
-    randomgreeting = random.choice(greeting)
+    randomgreeting = random.choice(FORTUNE)
 
     if args.question:
         prompt = " ".join(args.question).rstrip(string.punctuation)
