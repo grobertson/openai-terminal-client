@@ -117,7 +117,7 @@ o888o        `Y8bod8P' d888b    8""888P' `Y8bod8P' o888o o888o `Y888""8o
   MMmmdM9 ,M'   Yb  MM' "' 8I   `" 6W'   `Wb MM    MM  8)   MM  
   MM      8M""""""  MM     `YMMMa. 8M     M8 MM    MM   ,pm9MM  
   MM      YM.    ,  MM     L.   I8 YA.   ,A9 MM    MM  8M   MM  
-.JFGR.     `Mbmmd'.JMML.   M9mmmP'  `Ybmd9'.JMML  JMML.`Moo9^Yo.                                                     
+.JFGR.     `Mbmmd'.JMML.   M9mmmP'  `Ybmd9'.JMML  JMML.`Moo9^Yo.
 ''','''
   _____  _______  ______ _______  _____  __   _ _______
  |_____] |______ |_____/ |______ |     | | \  | |_____|
