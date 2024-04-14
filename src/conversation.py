@@ -30,12 +30,12 @@ class Conversation():
         if self.config.logging:
             self.config.logger.info('Conversation started.')
 
-    @property
-    def messages(self, **kwargs):
-        '''Return a completion request message, a list of objects'''
-        if kwargs:
-            pass
-        return self.create_message()
+    #@property
+    #def messages(self, **kwargs):
+    #    '''Return a completion request message, a list of objects'''
+    #    if kwargs:
+    #        pass
+    #    return self.create_message()
 
     def clean_data(self, data, **kwargs):
         '''Remove common junk from response before using'''

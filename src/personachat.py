@@ -52,14 +52,16 @@ class PersonaChat():
         # A "run" is a Conversation, so init a new one before the loop
         self.conversation = Conversation(self.config)
         while 1:
-            line_prompt = '[You]:\t'
+            line_prompt = '[You] :\t'
             user_input = self.get_user_input(line_prompt)
             if self._commands.is_command(user_input):
                 # Handle internal command
                 self.config.logger.info(f'Found a command in user_input: {user_input}')
                 self.route_command(user_input)
             else:
-                self.send(user_input)
+                resp = self.send(user_input)
+                self.config.logger.info(resp.model_dump())
+                print(f'\n\n\t\t{resp.choices[0].message.content}\n')
 
     def route_command(self, cmd):
         '''Dispatch calls to handle user commands'''
