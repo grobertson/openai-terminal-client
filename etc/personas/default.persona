@@ -25,6 +25,7 @@ persona:
   # Is this Persona intended for mature audiences. Currently unused
   nsfw: True
   
+  # TODO: Context trimming strategy
   # Strategy for trimming context
   # Choices: never, tail, middle, summarize, summarize_user, tail_user, middle_user
   strategy: tail
@@ -32,10 +33,19 @@ persona:
   # 0-5, Float(2). 
   initial_temperature: 1
   
-  # TODO: Rendering templates! 
   # A Jinja language template used to format system, assistant, and user messages
   # This allows experiments with formatting while retaining the same character stats
   # and prompt preambles. 
+  #
+  # The value of context_template should be the name of a directory in the
+  # templates directory. The directory should contain the following files:
+  # |-system.tmpl
+  # |-assistant.tmpl
+  # |-user.tmpl
+  # The contents of these files should be Jinja templates. context includes user_input
+  # and config.persona. Each context_template will be used to render the contents used
+  # within the system, assistant and user messages.
+
   context_template: default
 
   # Character/Agent details

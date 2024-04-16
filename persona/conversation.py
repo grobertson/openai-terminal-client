@@ -13,6 +13,7 @@ from datetime import datetime
 from openai import OpenAI
 from openai import APIConnectionError, APIError, APIStatusError, APITimeoutError
 import click
+from .message import Message
 
 class Conversation():
     '''Represent the completion request message as an object'''
@@ -30,20 +31,13 @@ class Conversation():
         if self.config.logging:
             self.config.logger.info('Conversation started.')
 
-    #@property
-    #def messages(self, **kwargs):
-    #    '''Return a completion request message, a list of objects'''
-    #    if kwargs:
-    #        pass
-    #    return self.create_message()
-
     def clean_data(self, data, **kwargs):
         '''Remove common junk from response before using'''
         if kwargs:
             pass
         strip='<|im_end|>'
         data = data.replace(strip, '')
-        strip = f'### {CHARACTER}: '
+        strip = f'### {self.config.persona}: '
         data = data.replace(strip, '')
         return data
 
@@ -51,21 +45,19 @@ class Conversation():
         '''Assemble the completion request'''
         if kwargs:
             pass
-        messages=[
-            {"role": "system", "content": self._system},
-            {"role": "assistant", "content": self._assistant},
-            {"role": "user", "content": user_input}
-        ]
-        return messages
+        message=Message(self.config, user_input)
+        return message
 
     def send(self, user_input):
         '''Wrap the api call for completion'''
-        self.config.logger.info(f'user_input : {user_input}')
+        self.config.logger.info(f'Raw user_input : {user_input}')
         #
         # Post-user pre-request manipulation should happen here.
         #
         messages = self.create_message(user_input)
         resp = self.request_completion(messages)
+        if self.config.debug:
+            self.config.logger.info(resp)
         #
         # Post-response pre-user manipulation should happen here
         #
@@ -78,10 +70,16 @@ class Conversation():
         self.config.logger.info('Called Conversation-request_completion()')
         try:
             if messages is None:
-                messages = self.create_message()
+                click.echo('Error: No messages to send')
+                self.config.logger.error('Error: No messages to send')
+                return None
             completion = self._client.chat.completions.create(
                 model=self.config.model_name,
-                messages=messages,
+                messages=[
+                    {"role": "system", "content": messages.system},
+                    {"role": "assistant", "content": messages.assistant},
+                    {"role": "user", "content": messages.user}
+                ],
                 temperature=self.config.temperature,
                 max_tokens=self.config.max_tokens,
                 )
@@ -93,41 +91,8 @@ class Conversation():
             click.echo('Error: Connection error during API request')
             self.config.logger.error('Error: Connection error during API request')
             completion = None
-        #except APIError:
-        #    click.echo('Error: Generic API error')
-        #    self.config.logger.error('Error: Generic API error')
-        #    completion = None
+        except APIError:
+            click.echo('Error: Generic API error')
+            self.config.logger.error('Error: Generic API error')
+            completion = None
         return completion
-
-    class Message():
-        '''Stores and renders the three message components used to request completion'''
-        def __init__(self, config, **kwargs):
-            '''Message() Init'''
-            self.config = config           
-            self.config.logger.info('New Message instance')
-            # log the time the Message was created
-            self.timestamp = time.time()
-            if kwargs:
-                pass
-            self._assistant = None
-            self._user = None
-            self._system = None
-            self._completion = None
-
-        @property
-        def assistant(self):
-            '''Renders the current assistant message using template'''
-            self.config.logger.info(self._assistant)
-            return self._assistant
-
-        @property
-        def system(self):
-            '''Renders the current system message using template'''
-            self.config.logger.info(self._assistant)
-            return self._system
-
-        @property
-        def user(self):
-            '''Renders the current user message using template'''
-            self.config.logger.info(self._assistant)
-            return self._user

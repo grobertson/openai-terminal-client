@@ -6,6 +6,8 @@ import random
 import yaml
 
 import click
+from colored import Fore, Back, Style
+import colorama
 
 from .conf import Conf
 from .commands import Cmd
@@ -33,8 +35,10 @@ class PersonaChat():
         self._commands = Cmd(self.config)
         self._commands.config = self.config
         self.scan_personas(self.config.persona_path)
-        #super().__init__(full_screen=True)
-        click.echo(center_multiline_string(random.choice(LOGO)))
+        disp_logo = center_multiline_string(random.choice(LOGO))
+        disp_logo = f'{Fore.BLUE}{disp_logo}{Style.RESET}'
+        if self.config.splash:
+            click.echo(disp_logo)
 
     def get_user_input(self, line_prompt):
         '''Wrap input() with a handler for EOF * KeyboardInterrupt'''
@@ -44,7 +48,16 @@ class PersonaChat():
         except (EOFError, KeyboardInterrupt):
             return ".quit"
 
-    def _run(self, **kwargs):
+    def run_once(self, user_input):
+        '''A single roundtrip'''
+        self.config.logger.info('Starting a single roundtrip')
+        self.conversation = Conversation(self.config)
+        resp = self.conversation.send(user_input)
+        if self.config.debug:
+            self.config.logger.info(resp.model_dump())
+        return resp
+
+    def run(self, **kwargs):
         '''Loop the chat()'''
         if kwargs:
             pass
@@ -52,7 +65,7 @@ class PersonaChat():
         # A "run" is a Conversation, so init a new one before the loop
         self.conversation = Conversation(self.config)
         while 1:
-            line_prompt = '[You] :\t'
+            line_prompt = f'{Fore.BLUE}[{Fore.WHITE}You{Fore.BLUE}] {Fore.WHITE}:{Style.RESET}\t'
             user_input = self.get_user_input(line_prompt)
             if self._commands.is_command(user_input):
                 # Handle internal command
@@ -60,8 +73,9 @@ class PersonaChat():
                 self.route_command(user_input)
             else:
                 resp = self.send(user_input)
-                self.config.logger.info(resp.model_dump())
-                print(f'\n\n\t\t{resp.choices[0].message.content}\n')
+                if self.config.debug:
+                    self.config.logger.info(resp.model_dump())
+                click.echo(f'\n{resp.choices[0].message.content}\n')
 
     def route_command(self, cmd):
         '''Dispatch calls to handle user commands'''
@@ -88,7 +102,7 @@ class PersonaChat():
         return None
 
     def send(self, user_input, **kwargs):
-        '''A single roundtrip'''
+        '''Send the user input to the current Conversation'''
         if kwargs:
             pass
         # Preproc is the domain of Message, and a Conversation

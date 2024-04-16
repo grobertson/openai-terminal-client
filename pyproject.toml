@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "persona"
+version = "0.1.0"
+description = ""
+authors = ["F. Grant Robertson <me@grantrobertson.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+openai = "^1.19.0"
+colored = "^2.2.4"
+pyyaml = "^6.0.1"
+click = "^8.1.7"
+nltk = "^3.8.1"
+textual = "^0.56.4"
+jinja2 = "^3.1.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
