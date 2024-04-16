@@ -1,5 +1,24 @@
 #!/usr/bin/env python3
 import sys
+import click
+
+from colored import Fore, Style
+
+
+help_text = f'''\
+{Fore.green}COMMANDS{Fore.WHITE}:{Style.RESET}
+
+{Fore.YELLOW}.quit                               {Fore.WHITE}Quit
+{Fore.YELLOW}.new_conversation                   {Fore.WHITE}Start a new Conversation
+{Fore.YELLOW}.save_conversation {Fore.BLUE}[{Fore.WHITE}FILENAME{Fore.BLUE}]       {Fore.WHITE}Save conversation to a file
+{Fore.YELLOW}.list_conversations                 {Fore.WHITE}List saved conversations
+{Fore.YELLOW}.load_conversation                  {Fore.WHITE}Load saved conversation from file
+{Fore.YELLOW}.show_persona                       {Fore.WHITE}Display the current Persona's values
+{Fore.YELLOW}.list_personas                      {Fore.WHITE}List available Personas
+{Fore.YELLOW}.load_persona {Fore.BLUE}[{Fore.WHITE}PERSONA{Fore.BLUE}]             {Fore.WHITE}Load a Persona
+{Fore.YELLOW}.show_context                       {Fore.WHITE}Display the most recent context values
+{Fore.YELLOW}.help                               {Fore.WHITE}Show this help text.{Style.RESET}
+'''
 
 class Cmd():
     '''User commands for Persona'''
@@ -14,6 +33,7 @@ class Cmd():
     def quit(self):
         '''Exit the app gracefully'''
         self.config.logger.info("REPL command: quit() ")
+        click.echo(f'{Fore.YELLOW}Exiting...{Style.RESET}')
         sys.exit(0)
 
     def new_conversation(self):
@@ -60,20 +80,7 @@ class Cmd():
     def help(self):
         '''REPL Command: help'''
         self.config.logger.info("REPL command: help() ")
-        help = '''\
-COMMANDS:
-.quit                               Quit
-.new_conversation                   Start a new Conversation
-.save_conversation [FILENAME]       Save conversation to a file
-.list_conversations                 List saved conversations
-.load_conversation                  Load saved conversation from file
-.show_persona                       Display the current Persona's values
-.list_personas                      List available Personas
-.load_persona [PERSONA]             Load a Persona
-.show_context                       Display the most recent context values
-.help                               Show this help text.
-'''
-        return help
+        return help_text
 
     def gather_commands(self):
         '''Returns a list of command words'''

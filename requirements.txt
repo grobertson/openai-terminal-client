@@ -1,6 +1,8 @@
 openai
 spacy==3.5.0
-colorama==0.4.6
+colored
+colorama
 pyyaml
 nltk
 click
+textual
