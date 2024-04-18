@@ -9,6 +9,7 @@
 
 import os
 from datetime import datetime
+import copy
 
 from openai import OpenAI
 from openai import APIConnectionError, APIError, APIStatusError, APITimeoutError
@@ -25,13 +26,15 @@ class Conversation():
         self.config = config
         self.config.set_persona(self.config.persona_default)
         self._client = OpenAI(base_url=self.config.base_url, api_key=self.config.api_key)
+        self._context = ''
         self._assistant = ''
         self._user = ''
         self._system = ''
+        self._messages = []
         if self.config.logging:
             self.config.logger.info('Conversation started.')
 
-    def clean_data(self, data, **kwargs):
+    def clean_data(self, data, **kwargs) -> str:
         '''Remove common junk from response before using'''
         if kwargs:
             pass
@@ -41,14 +44,15 @@ class Conversation():
         data = data.replace(strip, '')
         return data
 
-    def create_message(self, user_input=None, **kwargs):
+    def create_message(self, user_input=None, **kwargs) -> object:
         '''Assemble the completion request'''
         if kwargs:
             pass
-        message=Message(self.config, user_input)
+        message=Message(config=self.config, user_input=user_input, context=self._context)
+        self._messages.append(copy.copy(message))
         return message
 
-    def send(self, user_input):
+    def send(self, user_input) -> object:
         '''Wrap the api call for completion'''
         self.config.logger.info(f'Raw user_input : {user_input}')
         #
@@ -56,14 +60,16 @@ class Conversation():
         #
         messages = self.create_message(user_input)
         resp = self.request_completion(messages)
+        self._context += f'\n### { self.config.persona.user } : { user_input }\n'
+        self._context += f'\n### { self.config.persona.character.given_name } : { resp.choices[0].message.content }\n'
         if self.config.debug:
             self.config.logger.info(resp)
         #
-        # Post-response pre-user manipulation should happen here
+        # Post-response pre-users manipulation should happen here
         #
         return resp
 
-    def request_completion(self, messages=None, **kwargs):
+    def request_completion(self, messages=None, **kwargs) -> object:
         '''Make api request to get next response'''
         if kwargs:
             pass
@@ -90,6 +96,10 @@ class Conversation():
         except APIConnectionError:
             click.echo('Error: Connection error during API request')
             self.config.logger.error('Error: Connection error during API request')
+            completion = None
+        except APIStatusError:
+            click.echo('Error: API returned a status error')
+            self.config.logger.error('Error: API returned a status error')
             completion = None
         except APIError:
             click.echo('Error: Generic API error')

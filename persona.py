@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 '''Loader for Persona console OpenAI API client'''
 import sys
-import re
 
 import click
 
 from persona.conf import Conf
 from persona.personachat import PersonaChat
-from persona.utils import colorize_chat
+from persona.console import colorize_chat, wraptext
 
 # Simple kickstart to glue objects together into application
 # Keep app logic out of this file.
@@ -28,7 +27,6 @@ def app(persona, debug, no_splash, question):
     else:
         # If we're running a single-shot request, don't show the splash screen
         config.splash = False
-    
     config.logger.info('Dev loader started from persona.py ')
     config.persona_default = persona
     p = PersonaChat(config=config)
@@ -38,6 +36,7 @@ def app(persona, debug, no_splash, question):
             config.logger.info(f'Making single-shot request: {question}')
         completion = p.run_once(question)
         content = completion.choices[0].message.content
+        #content = wraptext(content)
         content = colorize_chat(content)
         click.echo(f'\n{content}\n')
     else:

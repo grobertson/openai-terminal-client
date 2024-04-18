@@ -1,8 +1,11 @@
+
 {{ persona.character.given_name }} is:
 {% for item in persona.character.addendum %}
 - {{ item }}
 {% endfor %}
+
 Respond to the following conversation prompt, writing only the next message in the series of messages
 Higher quality answers will be awarded more points!
+
 
 ####{{ persona.user }} : {{ user_input }}

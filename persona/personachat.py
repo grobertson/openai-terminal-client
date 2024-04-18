@@ -12,7 +12,7 @@ import colorama
 from .conf import Conf
 from .commands import Cmd
 from .conversation import Conversation
-from .console import center_multiline_string
+from .console import center_multiline_string, colorize_chat
 from .extras import LOGO
 
 class PersonaChat():
@@ -31,7 +31,7 @@ class PersonaChat():
         self.config.personas = None # Will hold list of persona
         self.persona = None # Will hold initialized Persona
         self.conversation = None # Hold the conversation
-        self.user_query = None # The user's input
+        self.user_query = None # The user's last input
         self._commands = Cmd(self.config)
         self._commands.config = self.config
         self.scan_personas(self.config.persona_path)
@@ -48,7 +48,7 @@ class PersonaChat():
         except (EOFError, KeyboardInterrupt):
             return ".quit"
 
-    def run_once(self, user_input):
+    def run_once(self, user_input) -> object:
         '''A single roundtrip'''
         self.config.logger.info('Starting a single roundtrip')
         self.conversation = Conversation(self.config)
@@ -57,7 +57,7 @@ class PersonaChat():
             self.config.logger.info(resp.model_dump())
         return resp
 
-    def run(self, **kwargs):
+    def run(self, **kwargs) -> None:
         '''Loop the chat()'''
         if kwargs:
             pass
@@ -75,7 +75,9 @@ class PersonaChat():
                 resp = self.send(user_input)
                 if self.config.debug:
                     self.config.logger.info(resp.model_dump())
-                click.echo(f'\n{resp.choices[0].message.content}\n')
+                assistant_visible_prompt = f'{Fore.BLUE}[{Fore.GREEN}{ self.config.persona.character.given_name }{Fore.BLUE}] {Fore.WHITE}:{Style.RESET}'
+                colorized_response_text = colorize_chat(resp.choices[0].message.content)
+                click.echo(f'\n{assistant_visible_prompt}{ colorized_response_text }\n')
 
     def route_command(self, cmd):
         '''Dispatch calls to handle user commands'''
@@ -96,7 +98,7 @@ class PersonaChat():
         if cmd=='.load_persona':
             print(self._commands.load_persona())
         if cmd=='.show_context':
-            print(self._commands.show_context())
+            print(self._commands.show_context(self.conversation._context))
         if cmd=='.help' or cmd=='?':
             print(self._commands.help)
         return None
