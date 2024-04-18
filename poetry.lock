@@ -694,6 +694,16 @@ files = [
 ]
 
 [[package]]
+name = "textjustify"
+version = "0.0.5"
+description = "A text justify package"
+optional = false
+python-versions = "*"
+files = [
+    {file = "TextJustify-0.0.5.tar.gz", hash = "sha256:0bd2e0508930290a013462b708e43489e63f35007164efd954cd2cd7ca66f1c3"},
+]
+
+[[package]]
 name = "textual"
 version = "0.56.4"
 description = "Modern Text User Interface framework"
@@ -760,4 +770,4 @@ test = ["coverage", "pytest", "pytest-cov"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "0c4eb087c70628cf2bc6990df6fa398fbcf4c858054164bcbd1dcfe0e883e7b6"
+content-hash = "e1218210e1d62f9888baabc6beaa6a694cffadf697e9da84374d49a80705b476"

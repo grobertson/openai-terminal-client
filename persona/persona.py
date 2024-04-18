@@ -14,6 +14,7 @@ class Persona:
             persona_name = config.persona_name
         try:
             persona_file = f'{config.persona_path}/{persona_name}.{config.persona_extension}'
+            config.logger.info(f'Loading persona file: {persona_file}')
             with open(
                 persona_file, 
                 encoding='utf-8') as f:

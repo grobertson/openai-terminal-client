@@ -54,7 +54,7 @@ class Conf:
         return ''.join([self.config_path, self.config_file])
 
     @property
-    def base_url(self):
+    def base_url(self) -> str:
         '''Return the base url using the config'''
         if not self.port and self.insecure:
             self.port = 80
@@ -62,7 +62,7 @@ class Conf:
             self.port = 443
         return f"{self.proto}://{self.host}:{self.port}/v1"
 
-    def set_persona(self, name='default'):
+    def set_persona(self, name='default') -> bool:
         '''Load/reload a persona into the application'''
         if self.persona_name == name:
             self.logger.info(f'Ignoring attempt to load previously loaded Persona: \

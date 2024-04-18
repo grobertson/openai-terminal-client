@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import click
-
+from pprint import pprint
 from colored import Fore, Style
 
 
@@ -39,42 +39,49 @@ class Cmd():
     def new_conversation(self):
         '''REPL Command: new_conversation'''
         self.config.logger.info("REPL command: new_conversation() ")
-        return 'Command not yet implemented.'
+        return 'Conversations not yet implemented.'
 
     def save_conversation(self):
         '''REPL Command: save_conversation'''
         self.config.logger.info("REPL command: save_conversation() ")
-        return 'Command not yet implemented.'
+        return 'Conversations not yet implemented.'
 
     def list_conversations(self):
         '''REPL Command: list_conversations'''
         self.config.logger.info("REPL command: list_conversations() ")
-        return 'Command not yet implemented.'
+        return 'Conversations not yet implemented.'
 
     def load_conversation(self):
         '''REPL Command: load_conversation'''
         self.config.logger.info("REPL command: load_conversation() ")
-        return 'Command not yet implemented.'
+        return 'Conversations not yet implemented.'
 
     def show_persona(self):
         '''REPL Command: show_persona'''
         self.config.logger.info("REPL command: show_persona() ")
-        return 'Command not yet implemented.'
+        self.config.logger.info(f'Persona: {self.config.persona}')
+        pprint(self.config.persona.__dict__)
+        return ''
 
     def list_personas(self):
         '''REPL Command: list_personas'''
         self.config.logger.info("REPL command: list_personas() ")
-        return 'Command not yet implemented.'
+        click.echo(f'{Fore.YELLOW}Personas : {Fore.WHITE}{self.config.personas}{Style.RESET}')
+        return ''
 
-    def load_persona(self):
+    def load_persona(self, arg='default'):
         '''REPL Command: load_persona'''
         self.config.logger.info("REPL command: load_persona() ")
-        return 'Command not yet implemented.'
+        self.config.set_persona(arg)
+        return self.show_persona()
 
-    def show_context(self):
+    def show_context(self, context):
         '''REPL Command: show_context'''
         self.config.logger.info("REPL command: show_context() ")
-        return 'Command not yet implemented.'
+        message = f'{Fore.YELLOW}Context:{Style.RESET}\n'
+        message += f'{Fore.YELLOW}--------{Style.RESET}\n'
+        message += f'{Fore.YELLOW}{context}{Style.RESET}\n'
+        return message
 
     @property
     def help(self):

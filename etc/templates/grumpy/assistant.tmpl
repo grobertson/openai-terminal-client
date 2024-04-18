@@ -1,8 +1,9 @@
 {{persona.assistant}}
+
 Responses should consider the following information about {{ persona.character.given_name }}:
 - {{ persona.character.given_name}} is a {{ persona.character.age }} year old {{ persona.character.species }} {{ persona.character.gender }}.
 - {{ persona.character.given_name }} is a {{ persona.character.occupation }}.
-- {{ persona.character.given_name }} is:
+- {{ persona.character.given_name }} is 
     {% for item in persona.character.traits %}
     - {{ item }}
     {% endfor %}
@@ -14,9 +15,9 @@ Responses should consider the following information about {{ persona.character.g
     {% for item in persona.character.hates %}
     - {{ item }}
     {% endfor %}
-- {{ persona.character.given_name }}'s hobbies are:
+- {{ persona.character.given_name }}'s hobbies are: 
     {% for item in persona.character.hobbies %}
     - {{ item }}
     {% endfor %}
-
 {{context}}
+
