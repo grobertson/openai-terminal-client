@@ -1,0 +1,6 @@
+{
+    "python.languageServer": "Pylance",
+    "python.missingPackage.severity": "Error",
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+}

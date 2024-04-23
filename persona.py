@@ -3,10 +3,11 @@
 import sys
 
 import click
+from loguru import logger
 
-from persona.conf import Conf
+from persona.config import Settings
 from persona.personachat import PersonaChat
-from persona.console import colorize_chat, wraptext
+from persona.console import colorize_chat
 
 # Simple kickstart to glue objects together into application
 # Keep app logic out of this file.
@@ -18,7 +19,7 @@ from persona.console import colorize_chat, wraptext
 @click.option('--question', default=None, help='User message to send to API')
 def app(persona, debug, no_splash, question):
     '''Persona - A flexible client for the OpenAI API'''
-    config = Conf()
+    config = Settings()
     config.debug = False
     if debug:
         config.debug = True
@@ -27,22 +28,21 @@ def app(persona, debug, no_splash, question):
     else:
         # If we're running a single-shot request, don't show the splash screen
         config.splash = False
-    config.logger.info('Dev loader started from persona.py ')
+    logger.info('Dev loader started from persona.py ')
     config.persona_default = persona
     p = PersonaChat(config=config)
-    config.logger.info(f'Personas found: {p.config.personas}')
+    logger.info(f'Personas found: {p.config.personas}')
     if question:
         if config.debug:
-            config.logger.info(f'Making single-shot request: {question}')
+            logger.info(f'Making single-shot request: {question}')
         completion = p.run_once(question)
         content = completion.choices[0].message.content
-        #content = wraptext(content)
         content = colorize_chat(content)
-        click.echo(f'\n{content}\n')
+        click.echo(f'{content}')
     else:
-        config.logger.info('Starting interactive mode')
+        logger.info('Starting interactive mode')
         p.run()
-    config.logger.info('Dev loader exiting.')
+    logger.info('Dev loader exiting.')
     sys.exit()
 
 if __name__ == '__main__':

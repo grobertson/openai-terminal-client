@@ -46,11 +46,12 @@ def readable_long_string(s):
 def colorize_chat(content):
     '''Colorize chat messages for readability'''
     t = f'{Style.RESET}{Fore.WHITE}' # Styling for plain text
-    q = f'{Style.RESET}{Style.BOLD}{Fore.GREEN}' # Styling for quotes
-    a = f'{Style.RESET}{Style.ITALIC}{Fore.RED}' # Styling for asterisks
+    q = f'{Style.RESET}{Style.BOLD}{Fore.WHITE}' # Styling for quotes
+    a = f'{Style.RESET}{Style.ITALIC}{Fore.GREEN}' # Styling for asterisks
     r = f'{Style.RESET}' # Styling for reset
+    content = content.lstrip() #Strip leading whitespace
     asterisk = re.compile(r'([\*])((\{1})*|(.*?[^\\](\{1})*))\1', re.UNICODE)
-    content = asterisk.sub(rf'\n\n{a}*\2*{t}\n\n', content)
+    content = asterisk.sub(rf'\n{a}*\2*{t}\n', content)
     quotes = re.compile(r'([\"])((\{1})*|(.*?[^\\](\{1})*))\1', re.UNICODE)
     content = quotes.sub(rf'{q}"\2"{t}', content)
     content = f'{t}{content}{r}'

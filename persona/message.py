@@ -1,6 +1,7 @@
 from time import time
 
 from jinja2 import Environment, FileSystemLoader
+from loguru import logger
 
 class Message():
     '''Stores and renders the three message components used to request completion'''
@@ -8,7 +9,7 @@ class Message():
         '''Message() Init'''
         self.config = config
         self._context = context
-        self.config.logger.info('New Message instance')
+        logger.info('New Message instance')
         # log the time the Message was created
         self.timestamp = str(time())
         self.user_input = user_input
@@ -23,6 +24,9 @@ class Message():
         self._system = None
         self._completion = None
 
+    def __repl__(self):
+        '''REPL representation'''
+        return f'Message(): {self.user_input}'
     @property
     def assistant(self):
         '''Renders the current assistant message using template'''
@@ -32,7 +36,7 @@ class Message():
             context=self._context
         )
         if self.config.debug:
-            self.config.logger.info(f'Assistant Message: {self._assistant}')
+            logger.info(f'Assistant Message: {self._assistant}')
         return self._assistant
 
     @property
@@ -44,7 +48,7 @@ class Message():
             context=self._context
         )
         if self.config.debug:
-            self.config.logger.info(f'System Message: {self._system}')
+            logger.info(f'System Message: {self._system}')
         return self._system
 
     @property
@@ -56,5 +60,5 @@ class Message():
             context=self._context
         )
         if self.config.debug:
-            self.config.logger.info(f'User Message: {self._user}')
+            logger.info(f'User Message: {self._user}')
         return self._user
