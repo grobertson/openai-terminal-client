@@ -4,17 +4,24 @@ import os
 import sys
 import yaml
 import click
-
+from loguru import logger
 class Persona:
     '''Read a persona file and represent it as an object'''
     home = os.environ.get('HOME')
     config_path = os.environ.get("OPENAI_TERMINAL_CONFIG_PATH", f'{home}')
-    def __init__(self, config, persona_name=False):
+    _instance = None
+    config = None
+
+    def __init__(self, config=None, persona_name=False):
+        self.config = config
         if not persona_name:
-            persona_name = config.persona_name
+            if self.config.persona_default:
+                persona_name = self.config.persona_default
+            else:
+                persona_name = 'default'
         try:
-            persona_file = f'{config.persona_path}/{persona_name}.{config.persona_extension}'
-            config.logger.info(f'Loading persona file: {persona_file}')
+            persona_file = f'{self.config.persona_full_path}/{persona_name}.{self.config.persona_extension}'
+            logger.info(f'Loading persona file: {persona_file}')
             with open(
                 persona_file, 
                 encoding='utf-8') as f:
@@ -28,8 +35,31 @@ class Persona:
         #Replace the character dict with an object, too
         self.character = self.Character(self.character)
 
+    def __new__(cls, config, persona_name=None):
+        '''Singleton pattern for Persona'''
+        if cls._instance is None:
+            cls._instance = super(Persona, cls).__new__(cls)
+        return cls._instance
+
     def __repr__(self) -> str:
         return str(self.character)
+
+    def switch_persona(self, persona_name):
+        '''Switch to a different persona'''
+        try:
+            persona_file = f'{self.config.persona_full_path}/{persona_name}.{self.config.persona_extension}'
+            logger.info(f'Loading persona file: {persona_file}')
+            with open(
+                persona_file, 
+                encoding='utf-8') as f:
+                # use safe_load instead load
+                config = yaml.safe_load(f)
+                self.__dict__.update(config['persona'])
+        except FileNotFoundError:
+            click.echo(
+                f"ERROR: Unable to read persona file '{persona_file}'. Exiting.")
+        #Replace the character dict with an object, too
+        self.character = self.Character(self.character)
 
     @property
     def name(self):

@@ -1,3 +1,7 @@
+# Project specific files
+persona.conf.yaml
+testing.persona
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

@@ -1,19 +1,17 @@
-from textual.app import App, ComposeResult
-from textual.widgets import Static
+import asyncio
 
+from persona.tui_chat import Conversation
+from persona.tui import ChatApp
 
-class AnimationApp(App):
-    def compose(self) -> ComposeResult:
-        self.box = Static("Hello, World!")
-        self.box.styles.background = "red"
-        self.box.styles.color = "black"
-        self.box.styles.padding = (1, 2)
-        yield self.box
-
-    def on_mount(self):
-        self.box.styles.animate("opacity", value=0.0, duration=2.0)
-
+async def main() -> None:
+    conversation = Conversation()
+    while True:
+        msg = input("Type your message: ")
+        choices = await conversation.send(msg)
+        print("Here are your choices:", choices)
+        choice_index = input("Pick your choice: ")
+        conversation.pick_response(choices[int(choice_index)])
 
 if __name__ == "__main__":
-    app = AnimationApp()
+    app = ChatApp()
     app.run()
