@@ -68,11 +68,17 @@ class Persona:
 
     class Character():
         '''Handle the character stanza in the persona file'''
+        given_name = ''
+        middle_name = ''
+        sir_name = ''
+
         def __init__(self, character):
             self.__dict__.update(character)
 
-        def __repr__(self) -> str:
-            return self.given_name
+        @property
+        def get(self) -> dict:
+            '''Return the character object'''
+            return self.__dict__
 
         @property
         def full_name(self):

@@ -4,48 +4,11 @@ import sys
 
 from colored import Fore, Style
 from loguru import logger
-from pprint import pprint
 import click
 
 from persona.config import Settings
 from persona.persona import Persona
 from persona.conversation import Conversation
-
-help_text = []
-help_text.append(f'{Fore.GREEN}COMMANDS{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}==============================={Style.RESET}')
-help_text.append(f'\n{Fore.GREEN}Completion Parameters{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.WHITE}----{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.set_temperature {Fore.BLUE}[{Fore.WHITE}TEMPERATURE{Fore.BLUE}]\t\t{Fore.WHITE}Set the temperature for the API')
-help_text.append(f'{Fore.YELLOW}.set_max_tokens {Fore.BLUE}[{Fore.WHITE}TOKENS{Fore.BLUE}]\t\t{Fore.WHITE}Set the max tokens for the API')
-help_text.append(f'{Fore.YELLOW}.set_model {Fore.BLUE}[{Fore.WHITE}MODEL{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the model for the API')
-help_text.append(f'{Fore.YELLOW}.set_server {Fore.BLUE}[{Fore.WHITE}SERVER{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the default server')
-help_text.append(f'{Fore.YELLOW}.set_top_p {Fore.BLUE}[{Fore.WHITE}TOP_P{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the top_p value for the API')
-help_text.append(f'\n{Fore.GREEN}Inspect values{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.WHITE}----{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.show_servers\t\t\t\t{Fore.WHITE}List available servers')
-help_text.append(f'{Fore.YELLOW}.show_config\t\t\t\t{Fore.WHITE}Show the current configuration')
-help_text.append(f'{Fore.YELLOW}.show_context\t\t\t\t{Fore.WHITE}Display the most recent context values')
-help_text.append(f'{Fore.YELLOW}.show_assistant\t\t\t\t{Fore.WHITE}Display the most recent context values')
-help_text.append(f'{Fore.YELLOW}.show_user\t\t\t\t{Fore.WHITE}Display the most recent context values')
-help_text.append(f'{Fore.YELLOW}.show_system\t\t\t\t{Fore.WHITE}Display the most recent context values')
-help_text.append(f'\n{Fore.GREEN}Conversations{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.WHITE}----{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.new_conversation\t\t\t{Fore.WHITE}Start a new Conversation')
-help_text.append(f'{Fore.YELLOW}.save_conversation {Fore.BLUE}[{Fore.WHITE}FILENAME{Fore.BLUE}]\t\t{Fore.WHITE}Save conversation to a file')
-help_text.append(f'{Fore.YELLOW}.list_conversations\t\t\t{Fore.WHITE}List saved conversations')
-help_text.append(f'{Fore.YELLOW}.load_conversation\t\t\t{Fore.WHITE}Load saved conversation from file')
-help_text.append(f'\n{Fore.GREEN}Personas{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.WHITE}----{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.show_persona\t\t\t\t{Fore.WHITE}Display the current Persona\'s values')
-help_text.append(f'{Fore.YELLOW}.list_personas\t\t\t\t{Fore.WHITE}List available Personas')
-help_text.append(f'{Fore.YELLOW}.load_persona {Fore.BLUE}[{Fore.WHITE}PERSONA{Fore.BLUE}]\t\t\t{Fore.WHITE}Load a Persona')
-help_text.append(f'\n{Fore.GREEN}Application{Fore.WHITE}:{Style.RESET}')
-help_text.append(f'{Fore.WHITE}----{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.toggle_debug\t\t\t\t{Fore.WHITE}Toggle debug mode')
-help_text.append(f'{Fore.YELLOW}.reset_context\t\t\t\t{Fore.WHITE}Reset the context')
-help_text.append(f'{Fore.YELLOW}.help\t\t\t\t\t{Fore.WHITE}Show this help text.{Style.RESET}')
-help_text.append(f'{Fore.YELLOW}.quit\t\t\t\t\t{Fore.WHITE}Quit')
 
 key_theme = f'{Fore.YELLOW}'
 value_theme = f'{Style.RESET}{Fore.WHITE}'
@@ -69,44 +32,56 @@ class Cmd():
             cls._instance = super(Cmd, cls).__new__(cls)
         return cls._instance
 
-    def quit(self):
+    def quit(self, cmd=None, context=None):
         '''Exit the app gracefully'''
         logger.info("REPL command: quit() ")
         click.echo(f'{Fore.YELLOW}Exiting...{Style.RESET}')
         sys.exit(0)
 
-    def new_conversation(self):
+    def new_conversation(self, cmd=None, context=None):
         '''REPL Command: new_conversation'''
         logger.info("REPL command: new_conversation() ")
         return 'Conversations not yet implemented.'
 
-    def save_conversation(self, cmd):
+    def save_conversation(self, cmd=None, context=None):
         '''REPL Command: save_conversation'''
         logger.info(f"REPL command: save_conversation({cmd}) ")
         return 'Conversations not yet implemented.'
 
-    def list_conversations(self):
+    def list_conversations(self, cmd=None, context=None):
         '''REPL Command: list_conversations'''
         logger.info("REPL command: list_conversations() ")
         return 'Conversations not yet implemented.'
 
-    def load_conversation(self, cmd):
+    def load_conversation(self, cmd=None, context=None):
         '''REPL Command: load_conversation'''
         logger.info("REPL command: load_conversation({cmd}) ")
-        print(cmd)
         cmd = cmd.split(' ')
-        print(cmd)
         return 'Conversations not yet implemented.'
 
-    def show_persona(self):
+    def show_persona(self, cmd=None, context=None): # noqa: W0613
         '''REPL Command: show_persona'''
         persona = self.config.get_persona()
-        for key, value in persona.items():
-            click.echo(f'{key_theme}{key}{sep_theme}: {value_theme}{value}{reset}')
+        output = []
+        output.append('')
+        for key in persona:
+            value = persona[key]
+            if isinstance(value, list):
+                output.append(f"{key_theme}{key}{sep_theme}:")
+                for item in value:
+                    output.append(f"{key_theme} - {value_theme}{item}{reset}")
+            elif key == 'character':
+                output.append(f"{key_theme}{key}{sep_theme}:")
+                for k in value.get:
+                    v = value.get[k]
+                    output.append(f"{key_theme} - {k}{sep_theme}: {value_theme}{v}{reset}")
+            else:
+                output.append(f"{key_theme}{key}{sep_theme}: {value_theme}{value}{reset}")
         logger.info("REPL command: show_persona() ")
-        return ''
+        output.append('')
+        return '\n'.join(output)
 
-    def list_personas(self):
+    def list_personas(self, cmd=None, context=None):
         '''REPL Command: list_personas'''
         output = '\n'
         self.config.personas = self.config.scan_personas(self.config.persona_full_path)
@@ -118,7 +93,7 @@ class Cmd():
         logger.info("REPL command: list_personas() ")
         return output
 
-    def load_persona(self, cmd):
+    def load_persona(self, cmd=None, context=None):
         '''REPL Command: load_persona'''
         logger.info("REPL command: load_persona() ")
         cmd_args = cmd.split(' ')
@@ -126,15 +101,15 @@ class Cmd():
             return 'Please provide a Persona name.'
         p = Persona(self.config)
         p.switch_persona(cmd_args[1])
-        return self.show_persona()
+        return self.show_persona(cmd, context)
 
-    def reset_context(self):
+    def reset_context(self, cmd=None, context=None):
         '''REPL Command: reset_context'''
         logger.info("REPL command: reset_context() ")
         self.conversation.reset_context()
         return 'Context reset.'
 
-    def set_temperature(self, cmd):
+    def set_temperature(self, cmd=None, context=None):
         '''REPL Command: set_temperature'''
         logger.info("REPL command: set_temperature() ")
         cmd_args = cmd.split(' ')
@@ -143,7 +118,7 @@ class Cmd():
         self.config.temperature = float(cmd_args[1])
         return f'API Parameter temperature set to {cmd_args[1]}'
 
-    def set_max_tokens(self, cmd):
+    def set_max_tokens(self, cmd=None, context=None):
         '''REPL Command: set_max_tokens'''
         logger.info("REPL command: set_max_tokens() ")
         cmd_args = cmd.split(' ')
@@ -152,7 +127,7 @@ class Cmd():
         self.config.max_tokens = int(cmd_args[1])
         return f'API Parameter max_tokens set to {cmd_args[1]}'
 
-    def set_model(self, cmd):
+    def set_model(self, cmd=None, context=None):
         '''REPL Command: set_model'''
         logger.info("REPL command: set_model() ")
         cmd_args = cmd.split(' ')
@@ -161,7 +136,7 @@ class Cmd():
         self.config.model_name = cmd_args[1]
         return f'API model set to {cmd_args[1]}'
 
-    def set_server(self, cmd):
+    def set_server(self, cmd=None, context=None):
         '''REPL Command: set_server'''
         logger.info("REPL command: set_server() ")
         cmd_args = cmd.split(' ')
@@ -170,7 +145,7 @@ class Cmd():
         self.config.set_server(cmd_args[1])
         return f'API server set to {cmd_args[1]}'
 
-    def show_servers(self):
+    def show_servers(self, cmd=None, context=None):
         '''REPL Command: show_servers'''
         logger.info("REPL command: show_servers() ")
         output = f'{Fore.YELLOW}Servers:{Style.RESET}\n'
@@ -179,14 +154,14 @@ class Cmd():
             output += f'{Fore.YELLOW}{server}\t{Style.RESET}\n'
         return output
 
-    def show_config(self):
+    def show_config(self, cmd=None, context=None):
         '''REPL Command: show_config'''
         def expand_persona(persona):
             '''Expand the persona dict'''
             n = persona['name']
             dn = persona['display_name']
             d = persona['description']
-            return f'{Fore.YELLOW}{dn} ({n}){Style.RESET}:\n - {d}\n'
+            return f'{Fore.YELLOW}{dn} ({n}){Style.RESET}: {d}\n'
 
         logger.info("REPL command: show_config() ")
         output = f'{Fore.YELLOW}Config:{Style.RESET}\n'
@@ -208,7 +183,7 @@ class Cmd():
                 output += f'{Fore.YELLOW}{key}{Style.RESET} : {value}\n'
         return output
 
-    def set_top_p(self, cmd):
+    def set_top_p(self, cmd=None, context=None):
         '''REPL Command: set_topP'''
         logger.info("REPL command: set_top() ")
         cmd_args = cmd.split(' ')
@@ -217,7 +192,7 @@ class Cmd():
         self.config.top_p = float(cmd_args[1])
         return f'API Parameter top_p set to {cmd_args[1]}'
 
-    def show_context(self, context):
+    def show_context(self, cmd=None, context=None):
         '''REPL Command: show_context'''
         logger.info("REPL command: show_context() ")
         message = f'\n{Fore.YELLOW}Context:{Style.RESET}\n'
@@ -225,7 +200,7 @@ class Cmd():
         message += f'{Fore.YELLOW}{context}{Style.RESET}\n'
         return message
 
-    def show_user(self):
+    def show_user(self, cmd=None, context=None):
         '''REPL Command: show_context'''
         logger.info("REPL command: show_user() ")
         if self.conversation.current_message is not None:
@@ -235,7 +210,7 @@ class Cmd():
             return m
         return 'No user message available.'
 
-    def show_assistant(self):
+    def show_assistant(self, cmd=None, context=None):
         '''REPL Command: show_context'''
         logger.info("REPL command: show_assistant() ")
         if self.conversation.current_message is not None:
@@ -245,7 +220,7 @@ class Cmd():
             return m
         return 'No assistant message available.'
 
-    def show_system(self):
+    def show_system(self, cmd=None, context=None):
         '''REPL Command: show_context'''
         logger.info("REPL command: show_system() ")
         if self.conversation.current_message is not None:
@@ -255,17 +230,17 @@ class Cmd():
             return m
         return 'No system message available.'
 
-    def toggle_debug(self, cmd):
+    def toggle_debug(self, cmd=None, context=None):
         '''REPL Command: set_temperature'''
         logger.info("REPL command: toggle_debug() ")
         self.config.debug = not self.config.debug
         return f'Debug set to {self.config.debug}'
 
     @property
-    def show_help(self):
+    def show_help(self, cmd=None, context=None):
         '''REPL Command: help'''
         logger.info("REPL command: help() ")
-        formatted_text = '\n'.join(help_text)
+        formatted_text = '\n'.join(self.help_text)
         return formatted_text
 
     def gather_commands(self):
@@ -298,7 +273,8 @@ class Cmd():
                     '.help',
                     '?',
                     ' ',
-                    '']
+                    '',
+                    '.']
         return commands
 
     def dispatch_or_false(self, cmd):
@@ -306,56 +282,62 @@ class Cmd():
         if self.is_command(cmd):
             logger.info(f'Dispatching command: {cmd}')
             cmd_args = cmd.split(' ')
-            verb = cmd_args[0]
-            if verb=='.quit' or cmd=='.exit':
-                self.quit()
-            elif verb=='.new_conversation':
-                print(self.new_conversation())
-            elif verb=='.save_conversation':
-                print(self.save_conversation(cmd))
-            elif verb=='.list_conversations':
-                print(self.list_conversations())
-            elif verb=='.load_conversation':
-                print(self.load_conversation(cmd))
-            elif verb=='.show_persona':
-                self.show_persona()
-            elif verb=='.list_personas':
-                print(self.list_personas())
-            elif verb=='.load_persona':
-                print(self.load_persona(cmd))
-            elif verb=='.reset_context':
-                print(self.reset_context())
-            elif verb=='.set_temperature':
-                print(self.set_temperature(cmd))
-            elif verb=='.set_max_tokens':
-                print(self.set_max_tokens(cmd))
-            elif verb=='.set_server':
-                print(self.set_server(cmd))
-            elif verb=='.set_model':
-                print(self.set_model(cmd))
-            elif verb=='.show_servers':
-                print(self.show_servers())
-            elif verb=='.show_config':
-                print(self.show_config())
-            elif verb=='.set_top_p':
-                print(self.set_top_p(cmd))
-            elif verb=='.toggle_debug':
-                print(self.toggle_debug(cmd))
-            elif verb=='.reset_context':
-                print(self.reset_context())
-            elif verb=='.show_context':
-                print(self.show_context(context=self.conversation._context))
-            elif verb=='.show_user':
-                print(self.show_user())
-            elif verb=='.show_assistant':
-                print(self.show_assistant())
-            elif verb=='.show_system':
-                print(self.show_system())
-            elif verb=='.help' or cmd=='?':
-                print(self.show_help)
+            verb = cmd_args[0][1:] # Remove the leading period
+            if hasattr(self, verb):
+                func = getattr(self, verb)
+                # Call the method with the command and context
+                # print the return value
+                click.echo(func(cmd=cmd, context=self.conversation.get_context))
+            else:   # Handle commands that are not methods
+                if verb=='exit':
+                    self.quit(cmd=cmd,context='')
+                elif verb=='help' or verb=='?':
+                    click.echo(self.help_text)
+                else:
+                    click.echo(f'Command not found: {cmd}')
             return True
         return False
 
     def is_command(self, user_input):
         '''True if first word of user_input matches an element in self[]'''
         return user_input.split(" ")[0] in self.commands
+
+    @property
+    def help_text(self) -> str:
+        '''Assemble and return the help text for the application'''
+        text = []
+        text.append(f'{Fore.GREEN}COMMANDS{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.YELLOW}==============================={Style.RESET}')
+        text.append(f'\n{Fore.GREEN}Completion Parameters{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.WHITE}----{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.set_temperature {Fore.BLUE}[{Fore.WHITE}TEMPERATURE{Fore.BLUE}]\t\t{Fore.WHITE}Set the temperature for the API')
+        text.append(f'{Fore.YELLOW}.set_max_tokens {Fore.BLUE}[{Fore.WHITE}TOKENS{Fore.BLUE}]\t\t{Fore.WHITE}Set the max tokens for the API')
+        text.append(f'{Fore.YELLOW}.set_model {Fore.BLUE}[{Fore.WHITE}MODEL{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the model for the API')
+        text.append(f'{Fore.YELLOW}.set_server {Fore.BLUE}[{Fore.WHITE}SERVER{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the default server')
+        text.append(f'{Fore.YELLOW}.set_top_p {Fore.BLUE}[{Fore.WHITE}TOP_P{Fore.BLUE}]\t\t\t{Fore.WHITE}Set the top_p value for the API')
+        text.append(f'\n{Fore.GREEN}Inspect values{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.WHITE}----{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.show_servers\t\t\t\t{Fore.WHITE}List available servers')
+        text.append(f'{Fore.YELLOW}.show_config\t\t\t\t{Fore.WHITE}Show the current configuration')
+        text.append(f'{Fore.YELLOW}.show_context\t\t\t\t{Fore.WHITE}Display the most recent context values')
+        text.append(f'{Fore.YELLOW}.show_assistant\t\t\t\t{Fore.WHITE}Display the most recent context values')
+        text.append(f'{Fore.YELLOW}.show_user\t\t\t\t{Fore.WHITE}Display the most recent context values')
+        text.append(f'{Fore.YELLOW}.show_system\t\t\t\t{Fore.WHITE}Display the most recent context values')
+        text.append(f'\n{Fore.GREEN}Conversations{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.WHITE}----{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.new_conversation\t\t\t{Fore.WHITE}Start a new Conversation')
+        text.append(f'{Fore.YELLOW}.save_conversation {Fore.BLUE}[{Fore.WHITE}FILENAME{Fore.BLUE}]\t\t{Fore.WHITE}Save conversation to a file')
+        text.append(f'{Fore.YELLOW}.list_conversations\t\t\t{Fore.WHITE}List saved conversations')
+        text.append(f'{Fore.YELLOW}.load_conversation\t\t\t{Fore.WHITE}Load saved conversation from file')
+        text.append(f'\n{Fore.GREEN}Personas{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.WHITE}----{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.show_persona\t\t\t\t{Fore.WHITE}Display the current Persona\'s values')
+        text.append(f'{Fore.YELLOW}.list_personas\t\t\t\t{Fore.WHITE}List available Personas')
+        text.append(f'{Fore.YELLOW}.load_persona {Fore.BLUE}[{Fore.WHITE}PERSONA{Fore.BLUE}]\t\t\t{Fore.WHITE}Load a Persona')
+        text.append(f'\n{Fore.GREEN}Application{Fore.WHITE}:{Style.RESET}')
+        text.append(f'{Fore.WHITE}----{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.toggle_debug\t\t\t\t{Fore.WHITE}Toggle debug mode')
+        text.append(f'{Fore.YELLOW}.reset_context\t\t\t\t{Fore.WHITE}Reset the context')
+        text.append(f'{Fore.YELLOW}.help\t\t\t\t\t{Fore.WHITE}Show this help text.{Style.RESET}')
+        text.append(f'{Fore.YELLOW}.quit\t\t\t\t\t{Fore.WHITE}Quit')
+        return '\n' + '\n'.join(text) + '\n'

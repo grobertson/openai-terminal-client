@@ -31,7 +31,8 @@ def app(persona, debug, no_splash, question):
     logger.info('Dev loader started from persona.py ')
     config.persona_default = persona
     p = PersonaChat(config=config)
-    logger.info(f'Personas found: {p.config.personas}')
+    personas = p.config.get_personas()
+    logger.info(f'Personas found: {personas}')
     if question:
         if config.debug:
             logger.info(f'Making single-shot request: {question}')

@@ -7,8 +7,6 @@
 #   - Conversation(config)
 #       - Message(config) <- Each represents one request->api-response
 
-import os
-from datetime import datetime
 import copy
 
 from openai import OpenAI
@@ -27,15 +25,16 @@ class Conversation():
         '''Message() Init'''
         if kwargs:
             pass
-        self.config = Settings()
-        self._client = OpenAI(base_url=self.config.base_url, api_key=self.config.api_key)
+        self.configuration = Settings()
+        self._client = OpenAI(base_url=self.configuration.base_url,
+                              api_key=self.configuration.api_key)
         self._context = ''
         self._assistant = ''
         self._user = ''
         self._system = ''
         self._messages = []
         self.current_message = None
-        if self.config.logging:
+        if self.configuration.logging:
             logger.info('Conversation started.')
 
     def __new__(cls, config=None):
@@ -50,17 +49,22 @@ class Conversation():
             pass
         strip='<|im_end|>'
         data = data.replace(strip, '')
-        strip = f'###{self.config.persona}:'
+        strip = f'###{self.configuration.persona}:'
         data = data.replace(strip, '')
         return data
 
-    def create_message(self, user_input=None, **kwargs) -> object:
+    def create_completion_request(self, user_input=None, **kwargs) -> object:
         '''Assemble the completion request'''
         if kwargs:
             pass
-        message=Message(config=self.config, user_input=user_input, context=self._context)
+        message=Message(config=self.configuration, user_input=user_input, context=self._context)
         self._messages.append(copy.copy(message))
         return message
+
+    @property
+    def get_context(self) -> str:
+        '''Return the context data'''
+        return self._context
 
     def reset_context(self, **kwargs) -> None:
         '''Reset the context'''
@@ -72,7 +76,6 @@ class Conversation():
         self._system = ''
         self._messages = []
         self.current_message = None
-        click.echo('Context reset.')
 
     def send(self, user_input) -> object:
         '''Wrap the api call for completion'''
@@ -80,17 +83,18 @@ class Conversation():
         #
         # Post-user pre-request manipulation should happen here.
         #
-        messages = self.create_message(user_input)
+        messages = self.create_completion_request(user_input)
         self.current_message = messages
         resp = self.request_completion(messages)
         try:
-            self._context += f'\n#{ self.config.persona.user }: { user_input }\n'
-            self._context += f'\n#{ self.config.persona.character.given_name }: { resp.choices[0].message.content }'
+            self._context += f'\n#{ self.configuration.persona.user }: { user_input }\n'
+            self._context += f'\n#{ self.configuration.persona.character.given_name }: '
+            self._context += f'{ resp.choices[0].message.content }'
         except AttributeError:
             logger.error('Error: API response is None')
             logger.error(f'{resp}')
             return None
-        if self.config.debug:
+        if self.configuration.debug:
             logger.info(resp)
         #
         # Post-response pre-users manipulation should happen here
@@ -108,19 +112,19 @@ class Conversation():
                 logger.error('Error: No messages to send')
                 return None
             completion = self._client.chat.completions.create(
-                model=self.config.model_name,
+                model=self.configuration.model_name,
                 messages=[
                     {"role": "system", "content": messages.system},
                     {"role": "assistant", "content": messages.assistant},
                     {"role": "user", "content": messages.user}
                 ],
-                temperature=self.config.temperature,
-                top_p=self.config.top_p,
-                n=self.config.n,
-                frequency_penalty=self.config.frequency_penalty,
-                presence_penalty=self.config.presence_penalty,
-                stop=self.config.stop,
-                max_tokens=self.config.max_tokens,
+                temperature=self.configuration.temperature,
+                top_p=self.configuration.top_p,
+                n=self.configuration.n,
+                frequency_penalty=self.configuration.frequency_penalty,
+                presence_penalty=self.configuration.presence_penalty,
+                stop=self.configuration.stop,
+                max_tokens=self.configuration.max_tokens,
                 )
         except APITimeoutError as error:
             click.echo('Timeout while making API request')

@@ -72,7 +72,9 @@ class PersonaChat():
                 resp = self.send(user_input=user_input)
                 if resp is not None:
                     logger.debug(resp.model_dump())
-                assistant_visible_prompt = f'{Fore.WHITE}--{Fore.BLUE}[{Fore.GREEN}{ self.config.persona.character.given_name }{Fore.BLUE}]{Fore.WHITE}--- :{Style.RESET}'
+                assistant_visible_prompt = f'{Fore.WHITE}--{Fore.BLUE}[{Fore.GREEN}'
+                assistant_visible_prompt += f'{ self.config.persona.character.given_name }'
+                assistant_visible_prompt += f'{Fore.BLUE}]{Fore.WHITE}--- :{Style.RESET}'
                 if resp is not None:
                     colorized_response_text = colorize_chat(resp.choices[0].message.content)
                     pprint(f'\n{assistant_visible_prompt}\n{ colorized_response_text }\n')
