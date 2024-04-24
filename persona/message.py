@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+'''Represent a message as an object'''
 from time import time
 
 from jinja2 import Environment, FileSystemLoader

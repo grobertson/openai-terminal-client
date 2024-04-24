@@ -1,4 +1,5 @@
-# This default Persona can also serve as a useful example guide for how to create your own
+# This SIMPLE default Persona can serve as a useful example guide for how to 
+# create your own. See character.persona.example.yml for a more complex example.
 # The structure defined here must not be modified
 # All fields and values contained should be considered manditory.
 #
@@ -16,7 +17,7 @@ persona:
 
   # Eventually this project may accept user contributed Personas or Templates so, here's
   # structured info for that use. 
-  creator: James Wylde (@jameswylde)
+  creator: Grant Robertson (@grobertson)
   created_on: 1712784265
   last_update_by: Grant Robertson (@grobertson)
   update_on: 1712784265
@@ -47,16 +48,19 @@ persona:
 
   context_template: legacy
 
-  user: 'User'
   # Character/Agent details
+  # These values are used to populate the character object in the template context
+  # and can be used in the rendering of system, assistant, and user messages.
+  # This is the MINIMAL example. Personas may have more complex character outlines
+  # with more detailed information about the character's background, personality, etc.
 
-  character_name: 'Interviewer'
-  character:
-    given_name: 'Interviewer'
+#character is a special field. It is is encapsulated in the Character object in the template context
+#character allows key:value pairs to be added (Elsewhere YAML arrays are used rather than a python dict.)
+  character:                    
+    given_name: 'Interviewer'   
     # All of these values are available in the template context. New varables can be added
     # to the character object as needed, and they will be available in the template context
     # for use in rendering system, assistant, and user messages.
-
 
 # Below here are Persona settings which can more or less be left alone
 # Advanced users may leverage these extended settings to modify the
