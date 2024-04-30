@@ -15,6 +15,11 @@ based interactive games using any available LLM.
 Prompts from Genie have been deprecated. Previous Genie prompts have been
 converted to the Persona system.
 
+I would like to thank @jameswylde, the author of Genie, for a good place 
+from which to jump off. 
+
+If you find Persona's flexibility is overwhelming, you might check out Genie for a more straight-forward client.
+
 ## Table of Contents
 
 - [Persona](#persona)
