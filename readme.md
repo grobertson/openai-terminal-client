@@ -37,7 +37,7 @@ Instructions on how to install and set up the project.
 Clone this repository into a local directory.
 
 ```
-git clone https://github.com/grobertson/openai-terminal-client/
+git clone https://github.com/grobertson/persona-openai-cli-chat/
 ```
 
 Export API keys environment variables, creating one variable per API server, to match
@@ -73,7 +73,9 @@ Type *'?'* or *'.help'* at the prompt for help.
 
 To exit the program, type '.exit' or '.quit' at the prompt, or press Ctrl-C.
 
-## Contributing
+## Additional Information
+
+### Contributing
 
 Guidelines for contributing to the project and how to submit pull requests.
 
@@ -81,12 +83,13 @@ If you've modified Persona in a way you think is interesting or cool, please sub
 
 - *TO-DO: Write contributor guidelines
 
-## About
+### About
 
-Original Copyright (c) 2023 James Wylde @jameswylde
-Modifications Copyright (c) 2024 Grant Robertson @grobertson
+- Original Copyright (c) 2023 James Wylde @jameswylde
 
-## License
+- Modifications Copyright (c) 2024 Grant Robertson @grobertson
+
+### License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
