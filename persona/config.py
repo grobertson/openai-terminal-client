@@ -7,7 +7,7 @@ import sys
 import yaml
 from yaml.scanner import ScannerError
 from yaml.parser import ParserError
-
+from openai import OpenAI
 from loguru import logger
 import click
 
@@ -27,6 +27,7 @@ class Settings:
     debug = False
     logging = False
     default_server = "default"
+    user = 'Persona User'
     servers = []
     _personas = []
     persona_path = None
@@ -60,6 +61,12 @@ class Settings:
     def __init__(self) -> None:
         """Read and parse yaml config file, create object properties"""
         self.config_filename = f"{self.config_path}/etc/{self.config_file}"
+        self.proto = "https"
+        self.persona_name = None
+        self.host = None
+        self.port = None
+        self.insecure = False
+        self.keyname = None
         try:
             with open(self.config_filename, encoding="utf-8") as f:
                 # use safe_load instead load
@@ -79,14 +86,10 @@ class Settings:
             # If logger.add is never called the log > /dev/null
             logger.add(f"{self.log_file}")
         logger.info(f"Configuration loaded from: {self.config_filename} bound to Conf.logger")
-        self.proto = "https"
         self.persona_full_path = f"{self.config_path}/etc/{self.persona_path}"
-        self.persona_name = None
-        self.host = None
-        self.port = None
-        self.insecure = False
-        self.keyname = None
         self.set_server(name=self.default_server)
+        self.client = OpenAI(base_url=self.base_url,
+                              api_key=self.api_key)
         self._personas = self.scan_personas(self.persona_full_path)
         self.persona = Persona(config=self, persona_name=self.persona_name)
         self.set_persona(name=self.persona_default)
@@ -110,6 +113,13 @@ class Settings:
         )
         return f"{self.proto}://{self.host}:{self.port}{self.path}"
 
+    def get_server(self, name):
+        """Return the server configuration based on the name provided"""
+        for server in self.servers:
+            if str(server['name']).lower() == str(name).lower():
+                return server
+            return None
+
     def set_server(self, name=None) -> bool:
         """Set the server to send requests to"""
         if not name:
@@ -119,8 +129,24 @@ class Settings:
                 self.host = server["host"]
                 self.port = server["port"]
                 self.path = server["path"]
-                self.insecure = server["insecure"]
+                self.proto = 'https'
+                if server["insecure"]:
+                    self.proto = 'http'
                 self.api_key = os.environ.get(server["keyname"], None)
+                self.client = OpenAI(base_url=self.base_url,
+                                     api_key=self.api_key)
+                logger.info(f"Server set to: {self.host}:{self.port}")
+                return True
+                
+                self.host = server["host"]
+                self.port = server["port"]
+                self.path = server["path"]
+                self.proto = 'https'
+                if server["insecure"]:
+                    self.proto = 'http'
+                self.api_key = os.environ.get(server["keyname"], None)
+                self.client = OpenAI(base_url=self.base_url,
+                                api_key=self.api_key)
                 logger.info(f"Server set to: {self.host}:{self.port}")
                 return True
         logger.error(f"Failed to set server to: {self.host}")
@@ -139,6 +165,7 @@ class Settings:
                     self.persona = Persona(
                         config=self
                     )  # Returns a Persona object using persona_name
+                    self.persona.user = self.user
                     logger.info(f"Loaded Persona: {self.persona_name}.")
                     return True
         logger.info(f"Ignoring attempt to load non-existent Persona: \

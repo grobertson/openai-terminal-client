@@ -156,7 +156,7 @@ persona:
   # Below is an example of a special property added to persona which automatically
   #     combines given_name, middle_name, and sir_name. See the Persona class
   #     to extend or add your own injected fields.
-  
+
   assistant: "The following are details about you, {{ persona.full_name }} "
 
   

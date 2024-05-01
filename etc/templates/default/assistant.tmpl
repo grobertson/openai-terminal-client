@@ -1,21 +1,23 @@
-{{persona.assistant}}
-Responses should consider the following information about {{ persona.character.given_name }}:
-- {{ persona.character.given_name}} is a {{ persona.character.age }} year old {{ persona.character.species }} {{ persona.character.gender }}.
-- {{ persona.character.given_name }} is {{ persona.user }}'s {{ persona.character.occupation }}.
-- {{ persona.character.given_name }}'s nicknames are:
-    {% for item in persona.character.nickname %}
+## {{persona.assistant}}
+### Responses should consider the following information about {{ persona.character.given_name }}:
+- {{ persona.character.given_name}} is a {{ persona.character.age }} year old {{ persona.character.species }} {{ persona.character.gender }}
+- {{ persona.character.given_name }} is {{ persona.user }}'s {{ persona.character.occupation }}
+- {{ persona.character.given_name }}'s nicknames are:{% for item in persona.character.nickname %}
     - {{ item }}{% endfor %}
-- {{ persona.character.given_name }} is:
-    {% for item in persona.character.traits %}
+- {{ persona.character.given_name }} is:{% for item in persona.character.traits %}
     - {{ item }}{% endfor %}
-- {{ persona.character.given_name }} likes:
-    {% for item in persona.character.likes %}
+- {{ persona.character.given_name }} likes:{% for item in persona.character.likes %}
     - {{ item }}{% endfor %}
-- {{ persona.character.given_name }} hates:
-    {% for item in persona.character.hates %}
+- {{ persona.character.given_name }} hates:{% for item in persona.character.hates %}
     - {{ item }}{% endfor %}
-- {{ persona.character.given_name }}'s hobbies are:
-    {% for item in persona.character.hobbies %}
+- {{ persona.character.given_name }}'s hobbies are:{% for item in persona.character.hobbies %}
+    - {{ item }}{% endfor %}
+- {{ persona.character.given_name }}:{% for item in persona.character.addendum %}
     - {{ item }}{% endfor %}
 
+# Conversation history:
+
 {{context}}
+
+# Task description:
+{{persona.assistant}} will now generate a response for {{ persona.character.given_name }} based on the information provided.

@@ -77,7 +77,7 @@ class PersonaChat():
                 assistant_visible_prompt += f'{Fore.BLUE}]{Fore.WHITE}--- :{Style.RESET}'
                 if resp is not None:
                     colorized_response_text = colorize_chat(resp.choices[0].message.content)
-                    pprint(f'\n{assistant_visible_prompt}\n{ colorized_response_text }\n')
+                    click.echo(f'\n{assistant_visible_prompt}\n{ colorized_response_text }\n')
                 else:
                     click.echo('Error: API response is None')
 
@@ -92,4 +92,4 @@ class PersonaChat():
         logger.info('Passing user input to current Conversation')
         logger.info(f'User Message: {user_input}')
         # Push the user query to the current Conversation to create a new Message instance
-        return self.conversation.send(user_input)
+        return self.conversation.send(user_input, persona=self.persona)

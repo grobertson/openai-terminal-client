@@ -5,6 +5,7 @@ import sys
 from colored import Fore, Style
 from loguru import logger
 import click
+from jinja2 import Environment
 
 from persona.config import Settings
 from persona.persona import Persona
@@ -25,6 +26,7 @@ class Cmd():
         self.config = Settings()
         self.conversation = Conversation()
         self.commands = self.gather_commands()
+        self._environment = Environment()
 
     def __new__(cls):
         '''Singleton pattern for Cmd'''
@@ -179,6 +181,14 @@ class Cmd():
                 for persona in self.config.personas:
                     output += expand_persona(persona)
                 output += '\n'
+            elif key == 'stop':
+                output += f'{Fore.YELLOW}{key}{Style.RESET} : '
+                stop_strings = ', '.join(self.config.stop)
+                template = self._environment.from_string(stop_strings)
+                output += template.render(persona=self.config.persona)
+                output += '\n'
+            elif key == '_personas' or key == 'persona':
+                pass
             else:
                 output += f'{Fore.YELLOW}{key}{Style.RESET} : {value}\n'
         return output
@@ -341,3 +351,13 @@ class Cmd():
         text.append(f'{Fore.YELLOW}.help\t\t\t\t\t{Fore.WHITE}Show this help text.{Style.RESET}')
         text.append(f'{Fore.YELLOW}.quit\t\t\t\t\t{Fore.WHITE}Quit')
         return '\n' + '\n'.join(text) + '\n'
+
+def _render_from_string(self, template_str):
+        '''Render template from a string - used for second pass rendering'''
+        # Second pass - render template tags inserted from the first pass
+        template = self._environment.from_string(template_str)
+        # user_input and context are already rendered in the first pass
+        result = template.render(
+            persona=self.config.persona
+        )
+        return result

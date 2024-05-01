@@ -41,17 +41,13 @@ class Persona:
             cls._instance = super(Persona, cls).__new__(cls)
         return cls._instance
 
-    def __repr__(self) -> str:
-        return str(self.character)
-
     def switch_persona(self, persona_name):
         '''Switch to a different persona'''
         try:
-            persona_file = f'{self.config.persona_full_path}/{persona_name}.{self.config.persona_extension}'
+            persona_file = f'{self.config.persona_full_path}/{persona_name}.'
+            persona_file += f'{self.config.persona_extension}'
             logger.info(f'Loading persona file: {persona_file}')
-            with open(
-                persona_file, 
-                encoding='utf-8') as f:
+            with open(persona_file, encoding='utf-8') as f:
                 # use safe_load instead load
                 config = yaml.safe_load(f)
                 self.__dict__.update(config['persona'])
